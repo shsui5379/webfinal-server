@@ -27,8 +27,10 @@ const Campus = db.define("campus", {
 
   imageUrl: {
     type: Sequelize.STRING,
-    allowNull: false,
-    defaultValue: "https://upload.wikimedia.org/wikipedia/commons/c/ce/University_College_Toronto_1_-_April_2009_HDR.jpg"
+    defaultValue: "https://upload.wikimedia.org/wikipedia/commons/c/ce/University_College_Toronto_1_-_April_2009_HDR.jpg",
+    validate: {
+      isUrl: true
+    }
   }
 });
 
