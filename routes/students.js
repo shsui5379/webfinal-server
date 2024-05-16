@@ -27,27 +27,41 @@ const ash = require('express-async-handler');
 /* GET ALL STUDENTS: async/await using express-async-handler (ash) */
 // Automatically catches any error and sends to Routing Error-Handling Middleware (app.js)
 // It is the same as using "try-catch" and calling next(error)
-router.get('/', ash(async(req, res) => {
-  let students = await Student.findAll({include: [Campus]});
+router.get('/', ash(async (req, res) => {
+  let students = await Student.findAll({ include: [Campus] });
   res.status(200).json(students);  // Status code 200 OK - request succeeded
 }));
 
 /* GET STUDENT BY ID */
-router.get('/:id', ash(async(req, res) => {
+router.get('/:id', ash(async (req, res) => {
   // Find student by Primary Key
-  let student = await Student.findByPk(req.params.id, {include: [Campus]});  // Get the student and its associated campus
+  let student = await Student.findByPk(req.params.id, { include: [Campus] });  // Get the student and its associated campus
   res.status(200).json(student);  // Status code 200 OK - request succeeded
 }));
 
 /* ADD NEW STUDENT */
-router.post('/', function(req, res, next) {
+router.post('/', async function (req, res, next) {
+  let data = req.body;
+
+  if (data.imageUrl === "") {
+    delete data.imageUrl;
+  }
+
+  if (data.gpa === "") {
+    delete data.gpa;
+  }
+
+  if (await Student.findByPk(data.campusId) == null) {
+    delete data.campusId;
+  }
+
   Student.create(req.body)
     .then(createdStudent => res.status(200).json(createdStudent))
     .catch(err => next(err));
 });
 
 /* DELETE STUDENT */
-router.delete('/:id', function(req, res, next) {
+router.delete('/:id', function (req, res, next) {
   Student.destroy({
     where: {
       id: req.params.id
@@ -58,9 +72,9 @@ router.delete('/:id', function(req, res, next) {
 });
 
 /* EDIT STUDENT */
-router.put('/:id', ash(async(req, res) => {
+router.put('/:id', ash(async (req, res) => {
   await Student.update(req.body,
-        { where: {id: req.params.id} }
+    { where: { id: req.params.id } }
   );
   // Find student by Primary Key
   let student = await Student.findByPk(req.params.id);
