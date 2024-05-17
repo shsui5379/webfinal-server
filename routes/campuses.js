@@ -65,7 +65,17 @@ router.post('/', ash(async (req, res) => {
 
 /* EDIT CAMPUS */
 router.put('/:id', ash(async (req, res) => {
-  await Campus.update(req.body, {
+  let data = req.body;
+
+  if (data.email === "") {
+    delete data.email;
+  }
+
+  if (data.imageUrl === "") {
+    delete data.imageUrl;
+  }
+
+  await Campus.update(data, {
     where: {
       id: req.params.id
     }
