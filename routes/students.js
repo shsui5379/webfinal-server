@@ -51,8 +51,8 @@ router.post('/', async function (req, res, next) {
     delete data.gpa;
   }
 
-  if (await Student.findByPk(data.campusId) == null) {
-    delete data.campusId;
+  if (data.campusId === "" || await Student.findByPk(data.campusId) == null) {
+    data.campusId = null;
   }
 
   Student.create(req.body)
@@ -81,6 +81,10 @@ router.put('/:id', ash(async (req, res) => {
 
   if (data.gpa === "") {
     delete data.gpa;
+  }
+
+  if (data.campusId === "" || await Student.findByPk(data.campusId) == null) {
+    data.campusId = null;
   }
 
   await Student.update(data,
