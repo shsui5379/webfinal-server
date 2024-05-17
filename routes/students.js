@@ -73,7 +73,17 @@ router.delete('/:id', function (req, res, next) {
 
 /* EDIT STUDENT */
 router.put('/:id', ash(async (req, res) => {
-  await Student.update(req.body,
+  let data = req.body;
+
+  if (data.imageUrl === "") {
+    delete data.imageUrl;
+  }
+
+  if (data.gpa === "") {
+    delete data.gpa;
+  }
+
+  await Student.update(data,
     { where: { id: req.params.id } }
   );
   // Find student by Primary Key
